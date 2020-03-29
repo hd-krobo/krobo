@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.krs.mapper.AdminMapper">
+
+	<sql id="adminColumns">
+		  adm_no
+		, adm_id
+		, adm_pwd
+		, adm_type
+		, adm_name
+		, adm_tel
+		, adm_email
+		, ins_by
+		, ins_time
+		, upd_by
+		, upd_time
+		, del_yn
+		, del_by
+		, del_time
+		, last_login_time
+	</sql>
+	
+	<select id="selectAdminTotalCount" resultType="int">
+		SELECT COUNT(*) FROM tb_admin WHERE del_yn = 'N'
+	</select>
+	
+	<select id="selectAdminList" resultType="com.krs.domain.AdminDTO">
+		SELECT
+			<include refid="adminColumns" />
+		FROM
+			tb_admin
+		WHERE
+			del_yn = 'N'
+		ORDER BY
+			adm_no ASC
+	</select>
+	
+	<select id="selectAdminDetail" resultType="com.krs.domain.AdminDTO">
+		SELECT
+			<include refid="adminColumns" />
+		FROM
+			tb_admin
+		WHERE
+			del_yn = 'N'
+		AND
+			adm_no = #{adm_no}
+	</select>
+
+	<insert id="insertAdmin">
+		INSERT INTO tb_admin (
+			<include refid="adminColumns" />
+		) VALUES (
+			  #{admNo}
+			, #{admId}
+			, #{admPwd}
+			, #{admType}
+			, #{admName}
+			, #{admTel}
+			, #{admEmail}
+			, #{insBy}
+			, NOW()
+			, NULL
+			, NULL
+			, 'N'
+			, NULL
+			, NULL
+			, NULL
+		)
+	</insert>
+
+	<update id="updateAdmin">
+		UPDATE tb_admin
+		SET
+			  upd_by = #{updBy}
+			, upd_time = NOW()
+			<if test="admPwd != null and admPwd != ''">
+				, adm_pwd = #{adm_pwd}
+			</if>
+			, adm_type = #{admType}
+			, adm_name = #{admName}
+			, adm_tel = #{admTel}
+			, adm_email = #{admEmail}
+		WHERE
+			adm_no = #{admNo}
+	</update>
+	
+	<delete id="deleteAdmin">
+		UPDATE tb_admin
+		SET
+			  del_yn = 'Y'
+			, del_time = NOW()
+		WHERE
+			adm_no = #{admNo}
+	</delete>
+	
+</mapper>
